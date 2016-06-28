@@ -4,6 +4,9 @@ var bodyParser = require('body-parser');
 
 var app = express();
 
+// pulling in file
+var passport = require('../strategies/user-local.js');
+
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(express.static('public'));
