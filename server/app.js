@@ -4,6 +4,8 @@ var bodyParser = require('body-parser');
 
 var app = express();
 
+app.use(bodyParser.urlencoded({extended: true}));
+
 app.use(express.static('public'));
 
 // require routers. making the connection to index.js router. PULLING IN INDEX AND STORING IN INDEX
