@@ -6,12 +6,12 @@ var pg = require('pg');
 var connection = require('../modules/connection');
 
 // serialize
-passport.serializeUser(function(user, done){
-  done(null, user.id);
+passport.serializeUser(function(user, passDone){
+  passDone(null, user.id);
 });
 
 // deserialize
-passport.deserializeUser(function(id, done){
+passport.deserializeUser(function(id, passDone){
   console.log('called deserialize');
 
   pg.connect(connection, function(err, client, pgDone){
@@ -22,7 +22,7 @@ passport.deserializeUser(function(id, done){
     }
 
     client.query('SELECT * FROM users WHERE id = $1', [id], function(err, result){
-      pgDont();
+      pgDone();
       if(result.rows.length >= 1){
         console.log(result.rows[0]);
         return passDone(null, result.rows[0]);
