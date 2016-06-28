@@ -5,14 +5,45 @@ var pg = require('pg');
 // require module
 var connection = require('../modules/connection');
 
-// serialize and deserialize
+// serialize
+passport.serializeUser(function(user, done){
+  done(null, user.id);
+});
+
+// deserialize
+passport.deserializeUser(function(id, done){
+  console.log('called deserialize');
+
+  pg.connect(connection, function(err, client, pgDone){
+    //connection err
+    if(err){
+      console.log(err);
+      res.sendStatus(500);
+    }
+
+    client.query('SELECT * FROM users WHERE id = $1', [id], function(err, result){
+      pgDont();
+      if(result.rows.length >= 1){
+        console.log(result.rows[0]);
+        return passDone(null, result.rows[0]);
+        }
+
+        if(err){
+          // handle errors
+          console.log(err);
+        }
+      }
+    );
+  });
+
+});
 
 // captilization = constructon
 passport.use('local', new LocalStrategy(
   {
     passReqToCallback: true,
     usernameField: 'username'
-  }, function(req, username, password, passportDone) { // passport done
+  }, function(req, username, password, passDone) { // passport done
       console.log('hit local strategy');
 
       pg.connect(connection, function(err, client, pgDone){
@@ -24,14 +55,23 @@ passport.use('local', new LocalStrategy(
 
           if(err){
             console.log(err);
+            return passDone(null, false);
+
           }else{
+            console.log("result.rows =", result.rows);
+
             // found something
-            console.log(result.rows);
-            if(result.rows >= 1){
+            if(result.rows.length >= 1){
               var passwordDB= result.rows[0].password;
 
-
+              if(password === passwordDB){
+                console.log('correct pass');
+                return passDone(null, result.rows[0]);
+              }
             }
+
+            console.log("nope");
+            return passDone(null, false);
           }
         });
       });

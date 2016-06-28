@@ -6,10 +6,23 @@ var app = express();
 
 // pulling in file
 var passport = require('../strategies/user-local.js');
+var session = require('express-session');
 
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(express.static('public'));
+
+app.use(session({
+  secret: 'secret',  //could be any string
+  key: 'user',
+  resave: 'true',
+  saveUninitialized: false,
+  cookie: {maxage: 60000, secure: false}
+}));
+
+// initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // require routers. making the connection to index.js router. PULLING IN INDEX AND STORING IN INDEX
 var index = require('../routes/index');
