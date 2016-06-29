@@ -7,8 +7,8 @@ var passport = require('passport');
 
 router.post('/', passport.authenticate('local', //'local' connects to 'local' in user-local.js
   {
-    succesRedirect: '/views/users.html',
-    failureRedirect: '/views/failure.html'
+    successRedirect: '/views/users.html',
+    failureRedirect: '/views/failures.html'
   }
 ));
 

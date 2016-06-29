@@ -3,6 +3,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var pg = require('pg');
 
 // require module
+var encryptionLib = require('../modules/encryption');
 var connection = require('../modules/connection');
 
 // serialize
@@ -64,7 +65,8 @@ passport.use('local', new LocalStrategy(
             if(result.rows.length >= 1){
               var passwordDB= result.rows[0].password;
 
-              if(password === passwordDB){
+              // compare method
+              if(encryptionLib.comparePassword(password, passwordDB)){
                 console.log('correct pass');
                 return passDone(null, result.rows[0]);
               }

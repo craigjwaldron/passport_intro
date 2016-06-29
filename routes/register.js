@@ -5,6 +5,7 @@ var path = require('path');
 var pg = require('pg');
 
 // Require modules
+var encryptionLib = require('../modules/encryption'); // must pull module in to use
 var connection = require('../modules/connection');
 
 // this will be /register.
@@ -23,7 +24,13 @@ router.post('/', function(req,res){
 // time to insert into a DB
 // Connecting to DB
   pg.connect(connection, function(err, client, done){
-    client.query("INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id", [req.body.username, req.body.password], function(err, result) {
+
+    var userToSave = {
+      username: req.body.username,
+      password: encryptionLib.encryptPassword(req.body.password)
+    };
+
+    client.query("INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id", [req.body.username, userToSave.password ], function(err, result) {
 
       done();
 
